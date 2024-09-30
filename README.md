@@ -1,6 +1,6 @@
 # UIRenderer (https://github.com/yeekitc/UIRenderer)
 
-A custom UI Renderer implemented from scratch, featuring hierarchical UI models, efficient damage/redraw mechanisms, and flexible layout management using springs and struts paradigms.
+A custom UI Renderer implemented from scratch, featuring hierarchical UI models, efficient damage/redraw mechanisms, and flexible layout management using springs & struts paradigms.
 
 ## Features
 
