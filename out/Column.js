@@ -78,6 +78,16 @@ export class Column extends Group {
     // Our height is set to the height determined by stacking our children vertically.
     _doLocalSizing() {
         //=== YOUR CODE HERE ===
+        // accumulate the min, natural, and max sizes of the children
+        let maxW = { min: 0, nat: 0, max: 0 };
+        let sumH = { min: 0, nat: 0, max: 0 };
+        for (let child of this.children) {
+            maxW = SizeConfig.add(maxW, child.wConfig);
+            sumH = SizeConfig.maximum(sumH, child.hConfig);
+        }
+        // set our height configuration to the sum of the children
+        this.hConfig = sumH;
+        this.wConfig = maxW;
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     // This method adjusts the height of the children to do vertical springs and struts 
@@ -135,6 +145,18 @@ export class Column extends Group {
         let availCompr = 0;
         let numSprings = 0;
         //=== YOUR CODE HERE ===
+        // iterate over the children and calculate the values
+        for (let child of this.children) {
+            // if the child is a spring, increment the spring count
+            if (child instanceof Spring) {
+                numSprings++;
+            }
+            else {
+                // if the child is not a spring, add its natural size to the sum
+                natSum += child.hConfig.nat;
+                availCompr += child.hConfig.nat - child.hConfig.min;
+            }
+        }
         return [natSum, availCompr, numSprings];
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -144,6 +166,15 @@ export class Column extends Group {
     // the space at the bottom of the column as a fallback strategy).
     _expandChildSprings(excess, numSprings) {
         //=== YOUR CODE HERE ===
+        // if there are no springs, do nothing
+        if (numSprings === 0)
+            return;
+        // if there are springs, expand them evenly to fill the excess space
+        for (let child of this.children) {
+            if (child instanceof Spring) {
+                child.h += excess / numSprings;
+            }
+        }
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     // Contract our child objects to make up the given amount of shortfall.  Springs
@@ -160,6 +191,16 @@ export class Column extends Group {
         // from the natural height of that child, to get the assigned height.
         for (let child of this.children) {
             //=== YOUR CODE HERE ===
+            // if the child is a spring, skip it
+            if (child instanceof Spring)
+                continue;
+            // calculate the fraction of the total compressability that this child can cover
+            let fraction = (child.hConfig.nat - child.hConfig.min) / availCompr;
+            // calculate the amount of the shortfall that this child will cover
+            let assigned = fraction * shortfall;
+            // subtract the assigned amount from the natural height of the child
+            // (but don't go below the minimum height)
+            child.h = Math.max(child.hConfig.min, child.hConfig.nat - assigned);
         }
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -198,6 +239,25 @@ export class Column extends Group {
         }
         // apply our justification setting for the horizontal
         //=== YOUR CODE HERE ===
+        // if the justification is left, set the x = 0 for each child
+        if (this.wJustification === 'left') {
+            for (let child of this.children) {
+                child.x = 0;
+            }
+        } // if center, center the children in the col
+        else if (this.wJustification === 'center') {
+            for (let child of this.children) {
+                child.x = (this.w - child.w) / 2;
+            }
+        } // if right, set the x position of each child to the right edge of col 
+        else if (this.wJustification === 'right') {
+            for (let child of this.children) {
+                child.x = this.w - child.w;
+            }
+        }
+        else {
+            console.error("Invalid justification type");
+        }
     }
 }
 //===================================================================

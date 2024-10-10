@@ -92,6 +92,18 @@ export class Row extends Group {
     // Our width is set to the width determined by stacking our children horizontally.
     protected override _doLocalSizing() : void {
         //=== YOUR CODE HERE ===max};
+        // accumulate the min, natural, and max sizes of the children
+        let maxH = {min: 0, nat: 0, max: 0};
+        let sumW = {min: 0, nat: 0, max: 0};
+
+        for (let child of this.children){
+            maxH = SizeConfig.add(maxH, child.hConfig);
+            sumW = SizeConfig.maximum(sumW,child.wConfig);
+        }
+
+        // set our height configuration to the sum of the children
+        this.wConfig = sumW;
+        this.hConfig = maxH;
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -156,6 +168,17 @@ export class Row extends Group {
         let numSprings = 0; 
 
         //=== YOUR CODE HERE ===
+        // iterate over the children and calculate the values
+        for (let child of this.children){
+            // if the child is a spring, increment the spring count
+            if (child instanceof Spring){
+                numSprings++;
+            } else {
+                // if the child is not a spring, add its natural size to the sum
+                natSum += child.wConfig.nat;
+                availCompr += child.wConfig.nat - child.wConfig.min;
+            }
+        }
 
         return [natSum, availCompr, numSprings];
     }
@@ -168,6 +191,14 @@ export class Row extends Group {
     // the space at the right of the row as a fallback strategy).
     protected _expandChildSprings(excess : number, numSprings : number) : void {
         //=== YOUR CODE HERE ===
+        // if there are no springs, do nothing
+        if (numSprings === 0) return;
+        // if there are springs, expand them evenly to fill the excess space
+        for (let child of this.children){
+            if (child instanceof Spring){
+                child.w += excess / numSprings;
+            }
+        }
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -188,6 +219,15 @@ export class Row extends Group {
         // from the natural height of that child, to get the assigned height.
         for (let child of this.children) {
             //=== YOUR CODE HERE ===
+            // if the child is a spring, skip it
+            if (child instanceof Spring) continue;
+            // calculate the fraction of the total compressability that this child can cover
+            let fraction = (child.wConfig.nat - child.wConfig.min) / availCompr;
+            // calculate the amount of the shortfall that this child will cover
+            let assigned = fraction * shortfall;
+            // subtract the assigned amount from the natural height of the child
+            // (but don't go below the minimum height)
+            child.w = Math.max(child.wConfig.min, child.wConfig.nat - assigned);
         }
 }
 
@@ -232,6 +272,24 @@ export class Row extends Group {
         // apply our justification setting for the vertical
 
         //=== YOUR CODE HERE ===
+        // if the justification is top, set the y = 0 for each child
+        if (this.hJustification === 'top'){
+            for (let child of this.children){
+                child.y = 0;
+            }
+        } // if center, center the children in the col
+        else if (this.hJustification === 'center'){
+            for (let child of this.children){
+                child.y = (this.h - child.h) / 2;
+            }
+        } // if right, set the x position of each child to the right edge of col 
+        else if (this.hJustification === 'bottom'){
+            for (let child of this.children){
+                child.y = this.h - child.h;
+            }
+        } else {
+            console.error("Invalid justification type");
+        }
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
