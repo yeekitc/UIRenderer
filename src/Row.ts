@@ -97,8 +97,8 @@ export class Row extends Group {
         let sumW = {min: 0, nat: 0, max: 0};
 
         for (let child of this.children){
-            maxH = SizeConfig.add(maxH, child.hConfig);
-            sumW = SizeConfig.maximum(sumW,child.wConfig);
+            maxH = SizeConfig.maximum(maxH, child.hConfig);
+            sumW = SizeConfig.add(sumW,child.wConfig);
         }
 
         // set our height configuration to the sum of the children
@@ -196,7 +196,7 @@ export class Row extends Group {
         // if there are springs, expand them evenly to fill the excess space
         for (let child of this.children){
             if (child instanceof Spring){
-                child.w += excess / numSprings;
+                child.w = excess / numSprings;
             }
         }
     }

@@ -30,6 +30,8 @@ export class FilledObject extends DrawnObjectBase {
         //=== YOUR CODE HERE ===
         // if the new value is different from the old one, update the size and mark as damaged
         if (this._w !== v){
+            // damage at old size
+            this.damageAll();
             this._w = v;
             // update the width configuration to be fixed
             this._wConfig = SizeConfig.fixed(v);
@@ -42,6 +44,8 @@ export class FilledObject extends DrawnObjectBase {
         //=== YOUR CODE HERE ===
         // if the new value is different from the old one, update the size and mark as damaged
         if (this._h !== v){
+            // damage at old size
+            this.damageAll();
             this._h = v;
             // update the height configuration to be fixed
             this._hConfig = SizeConfig.fixed(v);
@@ -88,7 +92,7 @@ export class FilledObject extends DrawnObjectBase {
         
         //=== YOUR CODE HERE ===
         // fill the rectangle with the color
-        ctx.fillRect(this.x, this.y, this.w, this.h);
+        ctx.fillRect(0, 0, this.w, this.h);
     }
 
     

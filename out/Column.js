@@ -79,11 +79,11 @@ export class Column extends Group {
     _doLocalSizing() {
         //=== YOUR CODE HERE ===
         // accumulate the min, natural, and max sizes of the children
-        let maxW = { min: 0, nat: 0, max: 0 };
         let sumH = { min: 0, nat: 0, max: 0 };
+        let maxW = { min: 0, nat: 0, max: 0 };
         for (let child of this.children) {
-            maxW = SizeConfig.add(maxW, child.wConfig);
-            sumH = SizeConfig.maximum(sumH, child.hConfig);
+            sumH = SizeConfig.add(sumH, child.hConfig);
+            maxW = SizeConfig.maximum(maxW, child.wConfig);
         }
         // set our height configuration to the sum of the children
         this.hConfig = sumH;
@@ -172,7 +172,7 @@ export class Column extends Group {
         // if there are springs, expand them evenly to fill the excess space
         for (let child of this.children) {
             if (child instanceof Spring) {
-                child.h += excess / numSprings;
+                child.h = excess / numSprings;
             }
         }
     }

@@ -163,6 +163,7 @@ export class DrawnObjectBase {
     get w() { return this._w; }
     set w(v) {
         //=== YOUR CODE HERE ===
+        v = SizeConfig.withinConfig(v, this._wConfig);
         // declare damage if the new width differs from the existing width
         if (v !== this.w) {
             this._w = v;
@@ -196,6 +197,7 @@ export class DrawnObjectBase {
     set h(v) {
         //=== YOUR CODE HERE ===
         // declare damage if the new height differs from the existing height
+        v = SizeConfig.withinConfig(v, this._hConfig);
         if (v !== this.h) {
             this._h = v;
             this.damageAll();
@@ -419,7 +421,7 @@ export class DrawnObjectBase {
         // clip the drawing context to the given rectangle
         ctx.beginPath();
         ctx.rect(clipx, clipy, clipw, cliph);
-        ctx.closePath();
+        // ctx.closePath();
         ctx.clip();
     }
     // Utility routine to create a new rectangular path at our bounding box.

@@ -148,6 +148,7 @@ export class DrawnObjectBase {
     public get w() : number {return this._w;}
     public set w(v : number) {
         //=== YOUR CODE HERE ===
+        v = SizeConfig.withinConfig(v, this._wConfig);
         // declare damage if the new width differs from the existing width
         if (v !== this.w) {
             this._w = v;
@@ -193,6 +194,7 @@ export class DrawnObjectBase {
     public set h(v : number) {
         //=== YOUR CODE HERE ===
         // declare damage if the new height differs from the existing height
+        v = SizeConfig.withinConfig(v, this._hConfig);
         if (v !== this.h) {
             this._h = v;
             this.damageAll();
@@ -477,7 +479,7 @@ export class DrawnObjectBase {
         // clip the drawing context to the given rectangle
         ctx.beginPath();
         ctx.rect(clipx, clipy, clipw, cliph);
-        ctx.closePath();
+        // ctx.closePath();
         ctx.clip();
     }
 
